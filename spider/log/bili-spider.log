@@ -1,0 +1,24 @@
+2016-04-01 18:05:10,419 INFO sqlalchemy.engine.base.Engine SHOW VARIABLES LIKE 'sql_mode'
+2016-04-01 18:05:10,419 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,420 INFO sqlalchemy.engine.base.Engine SELECT DATABASE()
+2016-04-01 18:05:10,420 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,421 INFO sqlalchemy.engine.base.Engine SELECT CAST('test plain returns' AS CHAR(60)) AS anon_1
+2016-04-01 18:05:10,421 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,422 INFO sqlalchemy.engine.base.Engine SELECT CAST('test unicode returns' AS CHAR(60)) AS anon_1
+2016-04-01 18:05:10,422 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,423 INFO sqlalchemy.engine.base.Engine DESCRIBE `barrage`
+2016-04-01 18:05:10,423 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,425 INFO sqlalchemy.engine.base.Engine DESCRIBE `video`
+2016-04-01 18:05:10,425 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,426 INFO sqlalchemy.engine.base.Engine DESCRIBE `barrage`
+2016-04-01 18:05:10,426 INFO sqlalchemy.engine.base.Engine {}
+2016-04-01 18:05:10,427 INFO sqlalchemy.engine.base.Engine DESCRIBE `video`
+2016-04-01 18:05:10,427 INFO sqlalchemy.engine.base.Engine {}
+['http://www.bilibili.com/video/av624985/', 'http://www.bilibili.com/video/av45493/']
+开始抓取弹幕信息。
+父进程id：28004
+子进程id：28007，抓取网页：http://www.bilibili.com/video/av624985/。开始……
+子进程id：28008，抓取网页：http://www.bilibili.com/video/av45493/。开始……
+http://www.bilibili.com/video/av624985/
+http://www.bilibili.com/video/av45493/
+弹幕信息抓取结束！

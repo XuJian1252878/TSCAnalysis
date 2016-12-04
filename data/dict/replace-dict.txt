@@ -1,0 +1,236 @@
+2+33+	233	unknowx
+3+22+	233	unknowx
+333+	333	v	散开、撤退的意思
+555+	伤心	n	呜呜呜、哭泣
+666+	666	unknowx
+777+	着急	a
+1111+	冒泡	v	表示响应，应答。一般都是有人在前面说“在看的打个1”
+687	对不起	l
+88	再见	v
+886	再见	v
+184	一辈子	m
+520	我爱你	l
+885	帮帮我	n
+1414	意思意思	unknowx
+7456	气死我了	l
+rrr+	抓狂	n	啊啊啊啊啊
+~~~~+	~~~	w
+～～～～+	～～～	w
+kiss	接吻	v
+bf	男朋友	n
+gf	女朋友	n
+脑残	脑残	n
+nc	脑残	n
+傻逼	傻逼	n
+sb	傻逼	n
+bgm	背景音乐	n
+www+	哈哈大笑	v
+？+	疑惑	v
+\?+	疑惑	v
+……+	无语	nz
+…+	无语	nz
+\.\.\.+	无语	nz
+\.{1,2}	.	w
+。。。+	无语	nz
+。{1,2}	。	w
+，，+。。+	无语	nz
+！！！！+	惊讶	a
+！{1,3}	！	w
+!!!!+	惊讶	a
+!{1,3}	!	w
+灌灌+	灌水	n
+tmd	tmd	unknowx
+他妈	tmd	unknowx
+他妈的	tmd	unknowx
+tm	tmd	unknowx
+yoo+	搞基	unknowx	看见搞基时内心发出的冲动：yoooooooooooo ，http://www.acfun.tv/v/ac192948/
+ff+	羡慕	v	烧死异性恋
+ＦＦ+	羡慕	v	烧死异性恋
+卧草	卧槽	n
+我草	卧槽	n
+我操	卧槽	n
+我艹	卧槽	n
+靠+	卧槽	n
+草+	卧槽	n
+cao	卧槽	n
+草泥马	卧槽	n
+我\+\+	卧槽	n
+wtf	卧槽	n
+what the fuck	卧槽	n
+what the fuck!	卧槽	n
+what the fuck！	卧槽	n
+日了狗	卧槽	n
+我日+	卧槽	n
+日日+	卧槽	n
+我曰+	卧槽	n
+曰曰+	卧槽	n
+我靠+	卧槽	n
+次奥	卧槽	n
+我肏	卧槽	n
+woc	卧槽	n
+我擦	我擦	unknowx
+xx+	我擦	unknowx
+XX+	我擦	unknowx
+阿西吧	我擦	unknowx
+阿西吧类	我擦	unknowx
+我X	我擦	unknowx
+我x	我擦	unknowx
+x+X+	我擦	unknowx
+X+x+	我擦	unknowx
+nmb	我擦	unknowx
+艹	我擦	unknowx
+我勒个大擦	卧槽	n
+臭不要脸	臭不要脸	unknowx
+凑表脸	臭不要脸	unknowx
+啊啊+	抓狂	v
+cny	人民币	n
+马克	mark	v
+马克之	mark	v
+续一秒	续一秒	unknowx
+\+1s$	续一秒	unknowx
+＋1s$	续一秒	unknowx
+\+1S$	续一秒	unknowx
+＋1S$	续一秒	unknowx
+\+1	赞同	v	表示赞同前面某一个人的观点
+＋1	赞同	v	表示赞同前面某一个人的观点
+\+10086	强烈赞同	unknowx	表示强烈赞同前面某一个人的观点
+＋10086	强烈赞同	unknowx	表示强烈赞同前面某一个人的观点
+因吹四艇	有趣	a
+阴吹思婷	有趣	a
+亦可赛艇	激动	a
+gg	gg	unknowx
+g+j+	gg	unknowx
+j+j+	gg	unknowx
+g+j+2+33+	gg	unknowx
+j+j+2+33+	gg	unknowx
+py交易	py交易	unknowx
+python交易	py交易	unknowx	H
+屁眼交易	py交易	unknowx	H
+音乐交易	py交易	unknowx	H
+朋友交易	py交易	unknowx	H
+hhh	hhh	unknowx
+h+	hhh	unknowx	表示大笑
+は+	hhh	unknowx	表示大笑，ははは
+哈哈哈+	hhh	unknowx	表示大笑
+好污	好污	unknowx
+污+	好污	unknowx	不纯洁、黄色段子
+污妖王	好污	unknowx
+妈蛋	妈蛋	unknowx
+麻蛋	妈蛋	unknowx
+程序猿	程序员	n
+bb	bb	unknowx
+哔哔	bb	unknowx
+逼逼	bb	unknowx
+法克	卧槽	n
+技术猿	技术员	n
+绝壁	绝对	d
+绝逼	绝对	d
+jb	jb	unknowx
+鸡巴	jb	unknowx
+杰宝	jb	unknowx
+鸭梨	压力	n
+鱼唇	愚蠢	a
+rbq	肉便器	unknowx	深层次的婊子
+牛逼	牛逼	unknowx
+nb	牛逼	unknowx
+牛b	牛逼	unknowx
+牛B	牛逼	unknowx
+diao	牛逼	unknowx
+Q+W+Q+	QWQ	unknowx
+雅蠛蝶	拒绝	v
+彩弹	彩蛋	n
+慌了	慌了	unknowx
+好慌	好慌	unknowx
+方了	慌了	unknowx
+好方	好慌	unknowx
+懵逼	懵逼	unknowx
+矇逼	懵逼	unknowx
+嘿嘿嘿+	龌龊	a
+嘿嘿	滑头	n
+狂用葱插我	搞笑	v
+撒拉嘿哟	我爱你	l	韩语我爱你的音译
+sj	神经	n
+衰	倒霉	a
+碧池	婊子	n
+bitch	婊子	n
+￥	金钱	n
+＄	金钱	n
+￡	金钱	n
+℃	温度	n
+我服了你	我服了你	unknowx
+I服了YOU	我服了你	unknowx
+i服了you	我服了你	unknowx
+啊啊啊+	啊啊啊	nr
+啦啦啦+	开心	v
+OAO	惊讶	a
+oao	惊讶	a
+TT	哭泣	v
+QAQ	感动	v
+ＱＡＱ	感动	v
+qaq	感动	v
+q+a+q+	感动	v
+tДt	委屈	v	受挫后一种无辜的表情
+TДT	委屈	v	受挫后一种无辜的表情
+QWQ	笑哭	unknowx
+t+a+t+	伤心	n	哭
+t+u+t+	伤心	n	哭
+t+v+t+	伤心	n	哭
+q+w+q+	笑哭	unknowx
+q+u+q+	感动	v	U笑 感动的笑
+给跪	给跪	unknowx
+o+r+z+	给跪	unknowx	失意、受不了某人
+gay	同性恋	n
+♂+	♂	unknowx
+前方高能	前方高能	unknowx
+前方核能	前方高能	unknowx
+弹幕护体	前方高能	unknowx
+弹幕掩体	前方高能	unknowx
+高能掩体	前方高能	unknowx
+高能预警	前方高能	unknowx
+zz	政府	nz
+想睡觉	想睡觉	unknowx
+zzz+	想睡觉	unknowx
+被戴绿帽	被戴绿帽	unknowx
+ntr	被戴绿帽	unknowx
+关闭弹幕	前方高能	unknowx
+fuck	fuck	unknowx
+f\*\*k	fuck	unknowx
+cry	伤心	n
+ex	前任	n
+w+o+w+	吃惊	n
+kkk+	kkk	unknowx
+man	man	unknowx
+我的天	我的天	unknowx
+omg	我的天	unknowx
+o+h+	oh	unknowx
+avi	avi	unknowx
+萝莉	萝莉	n
+loli	萝莉	n
+110	报警	v
+五毛	五毛	n
+美分	美分	n
+战五渣	战五渣	unknowx
+醉了	醉了	unknowx
+好人卡	好人卡	n
+boss	boss	n
+up	up	unknowx	顶、up主、上传视频的人
+npc	npc	n	游戏中的配角角色
+gta	gta	n	一个游戏的名称
+hold住	hold住	unknowx
+HOLD住	hold住	unknowx
+亮了	亮了	unknowx
+get	获取	v
+逗比	逗逼	unknowx
+逗笔	逗逼	unknowx
+B站	b站	n
+bilibili	b站	n
+么么+哒	么么哒	unknowx
+cnn	cnn	unknowx
+做爱	做爱	unknowx
+啪啪啪+	做爱	unknowx	H
+x+o+	做爱	unknowx
+o+x+	做爱	unknowx
+第一次	第一次	unknowx
+k+j+	口交	n
+m+l+	做爱	v
+sm	性虐	n
