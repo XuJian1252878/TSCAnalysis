@@ -8,7 +8,6 @@ import re
 from decimal import Decimal, getcontext
 from gensim import corpora
 
-from analysis.model.barrageinfo import BarrageInfo
 from analysis.model.dictconfig import DictConfig
 from db.model.barrage import Barrage
 from util.datetimeutil import DateTimeUtil
@@ -53,8 +52,6 @@ def get_barrage_from_txt_file(txt_file_path, order_flag=False):
             barrages.append(barrage)
     barrages = sort_barrages(barrages, order_flag)
     # barrages = sorted(barrages, key=lambda barrage: barrage.play_timestamp)
-    # 将 barrage 中所有的 sender_id 信息存储起来。以备后期生成相似度矩阵。
-    BarrageInfo.collect_barrage_sender_id(barrages)
     return barrages
 
 
@@ -138,9 +135,11 @@ if __name__ == "__main__":
     #     print str(barrage_seg.play_timestamp), u"\t", u"\t".join([seg.word + u"\t" + seg.flag for seg
     #                                                               in barrage_seg.sentence_seg_list])
 
-    # gen_sorted_barrage_file(os.path.join(FileUtil.get_local_data_dir(), "2171229.txt"))
+    # gen_sorted_barrage_file(os.path.join(FileUtil.get_local_data_dir(), "8752370.txt"))
 
-    parse_barrage_xml_to_txt("4547002.xml")
+    print get_barrage_from_txt_file(os.path.join(FileUtil.get_local_data_dir(), "8752370.txt"))
+
+    # parse_barrage_xml_to_txt("4547002.xml")
 
     # barrages = get_barrage_from_live_text_file(os.path.join(FileUtil.get_project_root_path(), "data", "AlphaGo",
     #                                                         "bilibili", "2016-03-09.txt"))

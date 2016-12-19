@@ -185,6 +185,22 @@ class FileUtil(object):
         FileUtil.create_dir_if_not_exist(corpus_dir)
         return corpus_dir
 
+    # 获得训练数据的目录路径
+    @staticmethod
+    def get_train_data_dir():
+        data_dir = FileUtil.get_data_root_dir()
+        train_data_dir = os.path.join(data_dir, "train")
+        FileUtil.create_dir_if_not_exist(train_data_dir)
+        return train_data_dir
+
+    # 获取测试数据的目录路径
+    @staticmethod
+    def get_test_data_dir():
+        data_dir = FileUtil.get_data_root_dir()
+        test_data_dir = os.path.join(data_dir, "test")
+        FileUtil.create_dir_if_not_exist(test_data_dir)
+        return test_data_dir
+
 
 if __name__ == "__main__":
     print FileUtil.get_local_data_dir()
