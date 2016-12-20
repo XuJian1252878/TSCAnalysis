@@ -195,10 +195,13 @@ def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_
                                                           str(cid) + "-barrage-words.dict"))
         lda_model = models.LdaModel.load(os.path.join(FileUtil.get_train_model_dir(), str(cid) + "-barrage-lda.model"))
         gen_lda_vector_time_window(time_window_list, dictionary, lda_model)
-    # 计算每个时间窗口的rating值
-    max_rating, min_rating = rating_f(time_window_list)
 
     if not is_train:
+        # 因为有人在开始和结束的时候刷屏，所以把开始和结束的一分钟之内的弹幕去掉
+        if len(time_window_list) > 180:  # 如果视频片段大于30分钟
+            time_window_list = time_window_list[6: -6]
+        # 计算每个时间窗口的rating值
+        max_rating, min_rating = rating_f(time_window_list)
         # 去除主题不集中的时间窗口
         time_window_list = filter_time_window(time_window_list, max_rating, min_rating)
     return time_window_list

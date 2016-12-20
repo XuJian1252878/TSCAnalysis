@@ -57,10 +57,10 @@ def __save_train_or_test_data(test_data_file, result_highlight):
     """
     with codecs.open(test_data_file, 'wb', 'utf-8') as output_file:
         for item in result_highlight:
-            minute_str = str(item[0] / 60) + ':' + str(item[0] % 60)
-            second_str = str(item[1] / 60) + ':' + str(item[1] % 60)
-            label = str(item[2])
-            info = '\t'.join([minute_str, second_str, label]) + '\n'
+            minute_str = unicode(str(item[0] / 60)) + u':' + unicode(str(item[0] % 60))
+            second_str = unicode(str(item[1] / 60)) + u':' + unicode(str(item[1] % 60))
+            label = item[2]
+            info = u'\t'.join([minute_str, second_str, label]) + u'\n'
             output_file.write(info)
 
 
@@ -205,6 +205,7 @@ def evaluate_effect(baseline_file, predict_file):
 
     # 首先寻找重叠时间
     overlape_seconds = 0
+    overlape_labels_set = set([])
     overlape_labels = 0
     for start_p, end_p, label_p in predict_result:
         for start_b, end_b, label_b in baseline_sample:
@@ -217,7 +218,8 @@ def evaluate_effect(baseline_file, predict_file):
                 end = min([end_b, end_p])
                 overlape_seconds += end - start
                 if label_p == label_b:
-                    overlape_labels += 1
+                    overlape_labels_set.add(label_b)
+    overlape_labels = len(overlape_labels_set)
 
     # 计算重叠时间的指标信息
     precision = overlape_seconds * 1.0 / seconds_predict

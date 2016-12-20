@@ -111,6 +111,10 @@ class TimeWindow(object):
                 time_window.barrage_seg_list = temp_seg_list
                 time_window.label = label
                 time_window_list.append(time_window)
+
+                # 更新开始以及结束时间
+                start = end
+                end = start + TimeWindow.__TIME_WINDOW_SIZE
         return time_window_list
 
 # if __name__ == "__main__":
