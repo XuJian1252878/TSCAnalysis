@@ -15,6 +15,7 @@ from util.loader.dataloader import get_barrage_from_txt_file
 from wordsegment.wordseg import segment_barrages
 from analysis.model.timewindow import TimeWindow
 from analysis.model.kmeans import Kmeans
+from analysis.model.dbscan import Dbscan
 from gensim import corpora, models
 
 # 这里使用三种方法生成f向量
@@ -157,7 +158,8 @@ def cluster_barrage_vector(barrage_vector, cluster_num=26):
     :param cluster_num:
     :return:
     """
-    center_points, cluster = Kmeans(clusters_num=cluster_num, x_features=barrage_vector).cluster()
+    # center_points, cluster = Kmeans(clusters_num=cluster_num, x_features=barrage_vector).cluster()
+    cluster, noises = Dbscan(x_features=barrage_vector)
     return cluster
 
 
