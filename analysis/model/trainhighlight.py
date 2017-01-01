@@ -131,11 +131,12 @@ def svm_predict(svm_model, highlight_window_list, method=METHOD_F):
     return highlight_window_list
 
 
-def merge_highlight_by_same_label(highlight_window_list, cid):
+def merge_highlight_by_same_label(highlight_window_list, cid, method):
     """
     将具有相同predict_label的time_window标记成一个片段
     :param highlight_window_list:
     :param cid:
+    :param method:
     :return:
         highlight_slices: list[tuple(start, end, label)]  这里的start end以秒的方式来表示
     """
@@ -175,7 +176,8 @@ def merge_highlight_by_same_label(highlight_window_list, cid):
         index = forward_index - 1
 
     # 存储当前的highlight列表信息
-    __save_train_or_test_data(os.path.join(FileUtil.get_test_data_dir(), cid + '_predict_result.txt'), result_highlight)
+    __save_train_or_test_data(os.path.join(FileUtil.get_test_data_dir(), cid + '_' + method + '_predict_result.txt'),
+                              result_highlight)
     return result_highlight
 
 
@@ -194,14 +196,15 @@ def __calc_seconds_and_labels(highlight_slice):
     return seconds, label_count
 
 
-def save_overlape_info(cid, overlape_info):
+def save_overlape_info(cid, method, overlape_info):
     """
     将预测的结果与baseline的对比写入本地文件中
     :param cid:
-    :param result_highlight:
+    :param method:
+    :param overlape_info:
     :return:
     """
-    overlape_info_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_overlape_result.txt')
+    overlape_info_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_' + method + '_overlape_result.txt')
     with codecs.open(overlape_info_file, 'wb', 'utf-8') as output_file:
         for item in overlape_info:
             minute_str = unicode(str(item[0] / 60)) + u':' + unicode(str(item[0] % 60))
@@ -211,10 +214,11 @@ def save_overlape_info(cid, overlape_info):
             output_file.write(info)
 
 
-def evaluate_effect(cid, baseline_file, predict_file):
+def evaluate_effect(cid, method, baseline_file, predict_file):
     """
     将预测出的结果跟baseline（原来人工标好标签的字段），重叠时间的P R F1，label的P R F1
     :param cid:
+    :param method:
     :param baseline_file:
     :param predict_file:
     :return:
@@ -247,7 +251,7 @@ def evaluate_effect(cid, baseline_file, predict_file):
     overlape_labels = len(overlape_labels_set)
 
     # 存储具体的预测准确率信息
-    save_overlape_info(cid, overlape_info)
+    save_overlape_info(cid, method, overlape_info)
 
     # 计算重叠时间的指标信息
     precision = overlape_seconds * 1.0 / seconds_predict
@@ -262,7 +266,7 @@ def evaluate_effect(cid, baseline_file, predict_file):
     return precision, recall, F1, precision_label, recall_label, F1_label
 
 
-def __save_index(cid, precision, recall, F1, precision_label, recall_label, F1_label):
+def __save_index(cid, method, precision, recall, F1, precision_label, recall_label, F1_label):
     """
     存储计算出的指标信息
     :param cid: 影片的cid信息，一个cid唯一对应一个电影
@@ -274,7 +278,7 @@ def __save_index(cid, precision, recall, F1, precision_label, recall_label, F1_l
     :param F1_label:
     :return:
     """
-    file_name = os.path.join(FileUtil.get_test_data_dir(), cid + '_evaluate_index.txt')
+    file_name = os.path.join(FileUtil.get_test_data_dir(), cid + '_' + method + '_evaluate_index.txt')
     with codecs.open(file_name, 'wb', 'utf-8') as output_file:
         output_file.write('precision: ' + str(precision) + '\n')
         output_file.write('recall: ' + str(recall) + '\n')
@@ -320,13 +324,14 @@ def main(barrage_file, method=METHOD_F):
     highlight_window_list = svm_predict(svm_model, highlight_window_list, method)
 
     # 合并时间相连的并且标签相同的 high_light
-    result_highlight = merge_highlight_by_same_label(highlight_window_list, cid)
+    result_highlight = merge_highlight_by_same_label(highlight_window_list, cid, method)
 
     # 计算结果预测的指标信息
     baseline_file = os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt')
-    predict_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_predict_result.txt')
-    precision, recall, F1, precision_label, recall_label, F1_label = evaluate_effect(cid, baseline_file, predict_file)
-    __save_index(cid, precision, recall, F1, precision_label, recall_label, F1_label)
+    predict_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_' + method + '_predict_result.txt')
+    precision, recall, F1, precision_label, recall_label, F1_label = evaluate_effect(cid, method, baseline_file,
+                                                                                     predict_file)
+    __save_index(cid, method, precision, recall, F1, precision_label, recall_label, F1_label)
     return precision, recall, F1, precision_label, recall_label, F1_label
 
 
@@ -335,6 +340,4 @@ if __name__ == '__main__':
     save_corpus_path = '../../data/local/corpus-words.txt'
 
     main(barrage_file_path)
-
-
 

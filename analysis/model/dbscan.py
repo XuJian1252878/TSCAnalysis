@@ -230,7 +230,7 @@ class Dbscan(object):
             output_file.write('min_pts: ' + str(self.min_pts) + '\n')
             output_file.write('cluster count: ' + str(len(clusters.keys())) + '\n')
             for cluster_index, feature_index in clusters.items():
-                info = [clusters] + feature_index
+                info = [cluster_index] + feature_index
                 info = [str(item) for item in info]
                 output_file.write('\t'.join(info) + '\n')
 
