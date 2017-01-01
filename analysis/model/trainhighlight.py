@@ -10,6 +10,7 @@ from wordsegment.wordseg import segment_barrages
 from analysis.model.timewindow import TimeWindow
 from analysis.model.embedded import cluster_barrage_vector, gen_f_vector_time_window, train_barrage
 from analysis.model.embedded import METHOD_LDA, METHOD_WORD_BASE, METHOD_F, get_highlight
+from analysis.model.svm import multi_classi
 
 
 def __covert_time(time_str):
@@ -104,6 +105,8 @@ def train_svm(time_window_list):
     # 训练svm模型
     svm_model = svm.SVC()
     svm_model.fit(x_features, y_labels)
+    # 训练svm模型
+    # multi_classi(x_features, y_labels, test_feature)
     return svm_model
 
 
@@ -234,6 +237,28 @@ def evaluate_effect(baseline_file, predict_file):
     return precision, recall, F1, precision_label, recall_label, F1_label
 
 
+def __save_index(cid, precision, recall, F1, precision_label, recall_label, F1_label):
+    """
+    存储计算出的指标信息
+    :param cid: 影片的cid信息，一个cid唯一对应一个电影
+    :param precision:
+    :param recall:
+    :param F1:
+    :param precision_label:
+    :param recall_label:
+    :param F1_label:
+    :return:
+    """
+    file_name = os.path.join(FileUtil.get_test_data_dir(), cid + '_evaluate_index.txt')
+    with codecs.open(file_name, 'wb', 'utf-8') as output_file:
+        output_file.write('precision: ' + str(precision) + '\n')
+        output_file.write('recall: ' + str(recall) + '\n')
+        output_file.write('F1: ' + str(F1) + '\n')
+        output_file.write('precision_label: ' + str(precision_label) + '\n')
+        output_file.write('recall_label: ' + str(recall_label) + '\n')
+        output_file.write('F1_label: ' + str(F1_label) + '\n')
+
+
 def main(barrage_file, method=METHOD_F):
     """
     svm聚类的主流程函数
@@ -273,7 +298,7 @@ def main(barrage_file, method=METHOD_F):
 
 if __name__ == '__main__':
     barrage_file_path = '../../data/local/2065063.txt'
-    save_corpus_path = '../../data/local/8752370-save.txt'
+    save_corpus_path = '../../data/local/corpus-words.txt'
 
     main(barrage_file_path)
 

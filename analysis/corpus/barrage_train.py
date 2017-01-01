@@ -118,7 +118,7 @@ def build_doc2vec_model(corpus_file):
     model = Doc2Vec(min_count=1, window=10, size=100, sample=1e-4, workers=multiprocessing.cpu_count(), alpha=0.025)
     model.build_vocab(train_sentences.to_array())
 
-    for epoch in range(50):
+    for epoch in range(10):
         model.train(train_sentences.sentences_perm())
 
     model.save('./d2v.txt')
@@ -129,6 +129,6 @@ if __name__ == "__main__":
     # gen_corpus_words()
 
     # build_doc2vec_model()
-    save_corpus_path = '../../data/local/8752370-save.txt'
+    save_corpus_path = '../../data/local/corpus-words.txt'
 
     build_doc2vec_model(save_corpus_path)

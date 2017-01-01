@@ -11,6 +11,7 @@ import wordsegment.filterwords as filterwords
 from analysis.model.dictconfig import DictConfig
 from util.fileutil import FileUtil
 from util.loggerutil import Logger
+from util.loader.dataloader import get_barrage_from_txt_file
 
 logger = Logger(console_only=True).get_logger()
 
@@ -169,6 +170,18 @@ def __save_segment_word_to_file(barrage_seg_list, cid):
                 output_file.write(word_seg.word + u"\t" + word_seg.flag + u"\n")
 
 
+def __save_segment_word_list_to_file(barrage_seg_list, cid):
+    # barrage_seg_list -> barrage_seg -> sentence_seg_list -> sentence_seg
+    word_segment_file = os.path.join(FileUtil.get_word_segment_dir(),
+                                     "test-" + cid + "-seg-corpus-result.txt")
+    with codecs.open(word_segment_file, "wb", "utf-8") as output_file:
+        for barrage_seg in barrage_seg_list:
+            # words = [str(barrage_seg.play_timestamp)]
+            words = []
+            for word_seg in barrage_seg.sentence_seg_list:
+                words.append(word_seg.word)
+            output_file.write('\t'.join(words) + '\n')
+
 # 将切词的结果写入文件中，json的形式。
 # 参数：cid  弹幕来源的cid名称，用来构建弹幕切词结果的存储路径，格式如：cid-seg-result.json
 #      barrage_seg_list 切词结果list
@@ -193,12 +206,20 @@ def load_segment_barrages(cid):
 
 
 if __name__ == "__main__":
-    DictConfig.build_dicts()
-    sentence_list = [u"你终于承认完全不懂了！！！！！！！！！！", u"哈哈哈哈哈哈哈哈哈", u"(´▽｀)ノ♪(´▽｀)ノ♪(´▽｀)ノ♪(´▽｀)ノ♪", u"(╬ﾟдﾟ)▄︻┻┳═一(╬ﾟдﾟ)▄︻",
-                     u"(╬ﾟдﾟ)▄︻┻┳═一呀(╬ﾟдﾟ)▄︻",
-                     u"哈(╬ﾟдﾟ)▄︻┻┳═一不(╬ﾟдﾟ)▄︻", u"你是不是傻(╬ﾟдﾟ)▄︻┻┳═一(╬ﾟдﾟ)▄︻",
-                     u"123"]
-    for sentence in sentence_list:
-        sentence_seg = __segment_sentence(sentence)
-        for word_seg in sentence_seg:
-            print word_seg.word, u"\t", word_seg.flag, u"\t", word_seg.start_position, u"\t", word_seg.end_position
+    # DictConfig.build_dicts()
+    # sentence_list = [u"你终于承认完全不懂了！！！！！！！！！！", u"哈哈哈哈哈哈哈哈哈", u"(´▽｀)ノ♪(´▽｀)ノ♪(´▽｀)ノ♪(´▽｀)ノ♪", u"(╬ﾟдﾟ)▄︻┻┳═一(╬ﾟдﾟ)▄︻",
+    #                  u"(╬ﾟдﾟ)▄︻┻┳═一呀(╬ﾟдﾟ)▄︻",
+    #                  u"哈(╬ﾟдﾟ)▄︻┻┳═一不(╬ﾟдﾟ)▄︻", u"你是不是傻(╬ﾟдﾟ)▄︻┻┳═一(╬ﾟдﾟ)▄︻",
+    #                  u"123"]
+    # for sentence in sentence_list:
+    #     sentence_seg = __segment_sentence(sentence)
+    #     for word_seg in sentence_seg:
+    #         print word_seg.word, u"\t", word_seg.flag, u"\t", word_seg.start_position, u"\t", word_seg.end_position
+
+    cid = '935527'
+    barrage_file_path = '../data/local/2835798.txt'
+    # barrage_seg_list = load_segment_barrages(cid)
+    barrages = get_barrage_from_txt_file(barrage_file_path)
+    cid = FileUtil.get_cid_from_barrage_file_path(barrage_file_path)
+    barrage_seg_list = segment_barrages(barrages, cid)
+    __save_segment_word_list_to_file(barrage_seg_list, cid)

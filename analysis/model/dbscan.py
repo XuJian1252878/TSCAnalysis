@@ -3,6 +3,8 @@
 
 import numpy as np
 import math
+import codecs
+import datetime
 import sklearn
 from sklearn.cluster import DBSCAN
 import matplotlib.pyplot as plt
@@ -58,7 +60,7 @@ class Dbscan(object):
     @staticmethod
     def get_target_eps(k_distances):
         """
-        获取距离列表的中位数
+        在各个点的k_distance列表中，找出位于拐点的k_distance作为eps
         :param k_distances:
         :return:
         """
@@ -77,8 +79,8 @@ class Dbscan(object):
 
     def estimate_eps(self):
         """
-        计算每一个点与其他各点的距离，选取中位数上的距离为k_distance，
-        再取各个点的k_distance排序，选取中位数上的距离为eps
+        计算每一个点与其他各点的距离，从大到小排序后，选取第4大的距离为k_distance，
+        再取各个点的k_distance，并将他们排序，选取变化率最大的距离为eps
         :return:
         """
         k_distances = []
@@ -173,6 +175,7 @@ class Dbscan(object):
         # return True
 
         self.classifications[feature_index] = cluster_index
+        print '正在聚类: ', datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         for index in neighbours:
             if self.visit[index] == UNVISITED:
                 self.visit[index] = VISITED
@@ -211,6 +214,26 @@ class Dbscan(object):
                     cluster_index += 1
 
         return self.get_cluster_result()
+
+    @staticmethod
+    def __save_cluster_result(clusters, noise):
+        """
+        将聚类的结果写入文件中
+        :param clusters:
+        :param noise:
+        :return:
+        """
+        with codecs.open('dbscan-clusters.txt', 'wb', 'utf-8') as output_file:
+            output_file.write('cluster count: ' + str(len(clusters.keys())) + '\n')
+            for cluster_index, feature_index in clusters.items():
+                info = [clusters] + feature_index
+                info = [str(item) for item in info]
+                output_file.write('\t'.join(info) + '\n')
+
+        with codecs.open('dbscan-noise.txt', 'wb', 'utf-8') as output_file:
+            output_file.write('noise count: ' + str(len(noise)) + '\n')
+            info = [str(item) for item in noise]
+            output_file.write('\t'.join(info) + '\n')
 
     def get_cluster_result(self):
         """

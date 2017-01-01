@@ -273,7 +273,7 @@ def highlight_window_main(barrage_file, method=METHOD_F):
 
 if __name__ == '__main__':
     barrage_file_path = '../../data/local/9.txt'
-    save_corpus_path = '../../data/local/8752370-save.txt'
+    save_corpus_path = '../../data/local/corpus-words.txt'
     # barrages = get_barrage_from_txt_file(barrage_file_path)
     # cid = FileUtil.get_cid_from_barrage_file_path(barrage_file_path)
     # barrage_seg_list = segment_barrages(barrages, cid)
