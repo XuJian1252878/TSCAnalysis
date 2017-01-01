@@ -5,6 +5,8 @@ import numpy as np
 import math
 import codecs
 import datetime
+import os
+import pandas as pd
 import sklearn
 from sklearn.cluster import DBSCAN
 import matplotlib.pyplot as plt
@@ -94,8 +96,9 @@ class Dbscan(object):
                 dist = self.calc_distance(vector_1, vector_2)
                 tmp_k_distances.append(dist)
             tmp_k_distances = sorted(tmp_k_distances, key=lambda item: item)
-            k_distances.append(tmp_k_distances[self.k_th - 1])
-
+            k_distance = tmp_k_distances[self.k_th - 1]
+            k_distances.append(k_distance)
+            print 'dbscan k-distance: ', str(k_distance)
         k_distances = sorted(k_distances, key=lambda item: item)
 
         self.eps = Dbscan.get_target_eps(k_distances)
@@ -215,8 +218,7 @@ class Dbscan(object):
 
         return self.get_cluster_result()
 
-    @staticmethod
-    def __save_cluster_result(clusters, noise):
+    def __save_cluster_result(self, clusters, noise):
         """
         将聚类的结果写入文件中
         :param clusters:
@@ -224,6 +226,8 @@ class Dbscan(object):
         :return:
         """
         with codecs.open('dbscan-clusters.txt', 'wb', 'utf-8') as output_file:
+            output_file.write('eps: ' + str(self.eps) + '\n')
+            output_file.write('min_pts: ' + str(self.min_pts) + '\n')
             output_file.write('cluster count: ' + str(len(clusters.keys())) + '\n')
             for cluster_index, feature_index in clusters.items():
                 info = [clusters] + feature_index
@@ -241,6 +245,11 @@ class Dbscan(object):
         :return:
             返回聚类结果以及噪音点信息
         """
+        # model = DBSCAN(eps=self.eps, min_samples=self.min_pts, algorithm='auto')
+        # x_features_train = self.x_features_train  # 训练数据属性
+        # db = model.fit(x_features_train)
+        # self.classifications = db.labels_.tolist()
+
         clusters = {}
         noises = []
         for index in range(len(self.classifications)):
@@ -254,11 +263,21 @@ class Dbscan(object):
                 Exception('聚类过程中发生错误，还有未聚类的点！！')
             elif item == NOISE:
                 noises.append(index)
+        self.__save_cluster_result(clusters, noises)
         return clusters, noises
 
 
+# def read_data(file_path='bezdekIris.data.txt', flag=0):
+#     data_path = os.path.join('./', file_path)
+#     df = pd.read_csv(data_path, header=None)
+#
+#     y_labels = df.iloc[0: 150, 4]
+#     x_features = df.iloc[0: 150, 0: 4].values
+#     return x_features, y_labels
+
 # if __name__ == '__main__':
-#     dbscan = Dbscan()
+#     x_features, y_labels = read_data()
+#     dbscan = Dbscan(x_features=x_features)
 #     print dbscan.fit()
 #     print np.array(dbscan.classifications)
 

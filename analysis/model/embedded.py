@@ -151,19 +151,19 @@ def train_barrage(barrage_seg_list):
     return barrage_vector
 
 
-def cluster_barrage_vector(barrage_vector, cluster_num=26):
+def cluster_barrage_vector(barrage_vector, cluster_num=10):
     """
     对获得的弹幕语句进行聚类
     :param barrage_vector:
     :param cluster_num:
     :return:
     """
-    # center_points, cluster = Kmeans(clusters_num=cluster_num, x_features=barrage_vector).cluster()
-    cluster, noises = Dbscan(x_features=barrage_vector)
+    center_points, cluster = Kmeans(clusters_num=cluster_num, x_features=barrage_vector).cluster()
+    # cluster, noises = Dbscan(x_features=barrage_vector).fit()
     return cluster
 
 
-def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_sample=None):
+def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_sample=None, f_cluster=None):
     """
     根据每一条弹幕的分词列表以及聚类信息，获取电影中主题较为集中的片段
     :param barrage_seg_list:
@@ -171,6 +171,7 @@ def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_
     :param method
     :param is_train 训练 和 测试 情况下load的time_window不一样
     :param train_sample 人工标注的数据
+    :param f_cluster 聚好类的弹幕数据
     :return:
     """
     # 以十秒为时间窗口来划分弹幕文件
@@ -183,9 +184,9 @@ def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_
     # 获得每个时间窗口内的f向量
     if method == METHOD_F:
         # 对获得的弹幕进行聚类
-        barrage_vector = train_barrage(barrage_seg_list)
-        cluster = cluster_barrage_vector(barrage_vector)
-        gen_f_vector_time_window(time_window_list, cluster)
+        # barrage_vector = train_barrage(barrage_seg_list)
+        # cluster = cluster_barrage_vector(barrage_vector)
+        gen_f_vector_time_window(time_window_list, f_cluster)
     elif method == METHOD_WORD_BASE:
         # 获取弹幕的词频向量信息
         dictionary = corpora.Dictionary.load(os.path.join(FileUtil.get_train_model_dir(),
@@ -226,6 +227,7 @@ def rating_f(time_window_list):
             rating_up += ((item - f_mean) ** 2)
 
         rating_up /= (k * 1.0)
+        print time_window.f
         p = time_window.f * 1.0 / time_window.f.sum(axis=0)
         entropy = 1  # 避免只有一个主题有弹幕，然后entropy被算为0
         for item in p:
@@ -245,7 +247,7 @@ def filter_time_window(time_window_list, max_rating, min_rating):
     :param min_rating:
     :return:
     """
-    threshold = 0.3 * min_rating + 0.7 * max_rating
+    threshold = 0.7 * min_rating + 0.3 * max_rating
     time_window_result = []
     for time_window in time_window_list:
         if time_window.rating > threshold:

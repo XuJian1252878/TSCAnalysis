@@ -98,14 +98,14 @@ class TimeWindow(object):
         """
         time_window_list = []
         for start_seconds, end_seconds, label in train_sample:
-            temp_seg_list = []
 
             start = start_seconds
             end = start_seconds + TimeWindow.__TIME_WINDOW_SIZE
 
-            while end < end_seconds:
+            while start < end_seconds:
+                temp_seg_list = []
                 for barrage_seg in barrage_seg_list:
-                    if start_seconds <= barrage_seg.play_timestamp <= end_seconds:
+                    if start <= barrage_seg.play_timestamp <= end:
                         temp_seg_list.append(barrage_seg)
                 time_window = TimeWindow(cid, start / TimeWindow.__TIME_WINDOW_SIZE, start, end)
                 time_window.barrage_seg_list = temp_seg_list

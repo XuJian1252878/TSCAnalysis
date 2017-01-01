@@ -65,16 +65,17 @@ def __save_train_or_test_data(test_data_file, result_highlight):
             output_file.write(info)
 
 
-def match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method=METHOD_F):
+def match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method=METHOD_F, f_cluster=None):
     """
     将测试数据对应的time_window找出来，并且计算每一个time_window的f向量信息
     :param barrage_seg_list:
     :param train_sample:
     :param cid:
     :param method:
+    :param f_cluster:
     :return:
     """
-    time_window_list = get_highlight(barrage_seg_list, cid, method, True, train_sample)
+    time_window_list = get_highlight(barrage_seg_list, cid, method, True, train_sample, f_cluster)
     return time_window_list
 
 
@@ -193,9 +194,27 @@ def __calc_seconds_and_labels(highlight_slice):
     return seconds, label_count
 
 
-def evaluate_effect(baseline_file, predict_file):
+def save_overlape_info(cid, overlape_info):
+    """
+    将预测的结果与baseline的对比写入本地文件中
+    :param cid:
+    :param result_highlight:
+    :return:
+    """
+    overlape_info_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_overlape_result.txt')
+    with codecs.open(overlape_info_file, 'wb', 'utf-8') as output_file:
+        for item in overlape_info:
+            minute_str = unicode(str(item[0] / 60)) + u':' + unicode(str(item[0] % 60))
+            second_str = unicode(str(item[1] / 60)) + u':' + unicode(str(item[1] % 60))
+            labels = item[2:]
+            info = u'\t'.join([minute_str, second_str] + labels) + u'\n'
+            output_file.write(info)
+
+
+def evaluate_effect(cid, baseline_file, predict_file):
     """
     将预测出的结果跟baseline（原来人工标好标签的字段），重叠时间的P R F1，label的P R F1
+    :param cid:
     :param baseline_file:
     :param predict_file:
     :return:
@@ -210,6 +229,7 @@ def evaluate_effect(baseline_file, predict_file):
     overlape_seconds = 0
     overlape_labels_set = set([])
     overlape_labels = 0
+    overlape_info = []
     for start_p, end_p, label_p in predict_result:
         for start_b, end_b, label_b in baseline_sample:
             if start_p > end_b or end_p < start_b:
@@ -219,10 +239,15 @@ def evaluate_effect(baseline_file, predict_file):
                 # 有重叠的情况
                 start = max([start_b, start_p])
                 end = min([end_b, end_p])
-                overlape_seconds += end - start
+
+                overlape_info.append([start, end, label_p, label_b])  # 存储预测以及baseline的吻合度信息
                 if label_p == label_b:
+                    overlape_seconds += end - start  # 只有标签相等的时候，重合时间才算正确
                     overlape_labels_set.add(label_b)
     overlape_labels = len(overlape_labels_set)
+
+    # 存储具体的预测准确率信息
+    save_overlape_info(cid, overlape_info)
 
     # 计算重叠时间的指标信息
     precision = overlape_seconds * 1.0 / seconds_predict
@@ -271,17 +296,25 @@ def main(barrage_file, method=METHOD_F):
     cid = FileUtil.get_cid_from_barrage_file_path(barrage_file)
     barrage_seg_list = segment_barrages(barrages, cid)
 
+    # 如果是使用f向量，那么现将弹幕聚好类
+    f_cluster = None
+    if method == METHOD_F:
+        barrage_vector = train_barrage(barrage_seg_list)
+        f_cluster = cluster_barrage_vector(barrage_vector)
+
     # 然后读取人工标注的 barrage file的电影片段label信息
     train_sample = __load_train_or_data(os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt'))
 
     # 匹配训练数据以及其对应的时间窗口信息
-    time_window_list = match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method)
+    time_window_list = match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method, f_cluster)
 
     # 训练svm模型
     svm_model = train_svm(time_window_list)
+    print 'svm 训练完成'
 
     # 获取相应的time_window信息，读取全部的弹幕数据
-    highlight_window_list = get_highlight(barrage_seg_list, cid, method)
+    highlight_window_list = get_highlight(barrage_seg_list, cid, method, f_cluster=f_cluster)
+    print '获取 highlight列表'
 
     # 获取标记标签后的highlight信息
     highlight_window_list = svm_predict(svm_model, highlight_window_list, method)
@@ -292,7 +325,8 @@ def main(barrage_file, method=METHOD_F):
     # 计算结果预测的指标信息
     baseline_file = os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt')
     predict_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_predict_result.txt')
-    precision, recall, F1, precision_label, recall_label, F1_label = evaluate_effect(baseline_file, predict_file)
+    precision, recall, F1, precision_label, recall_label, F1_label = evaluate_effect(cid, baseline_file, predict_file)
+    __save_index(cid, precision, recall, F1, precision_label, recall_label, F1_label)
     return precision, recall, F1, precision_label, recall_label, F1_label
 
 

@@ -41,19 +41,20 @@ class WordSeg(object):
 
 # 记录一个弹幕的切词结果。
 class BarrageSeg(object):
-    def __init__(self, play_timestamp, sender_id, row_id):
+    def __init__(self, play_timestamp, sender_id, row_id, index=0):
         self.play_timestamp = float(play_timestamp)
         self.row_id = row_id
         self.sender_id = sender_id
         self.sentence_seg_list = []  # 弹幕切词结果列表，列表中的对象为__WordSeg。
-        self.index = 0
+        self.index = index
 
     @staticmethod
     def dict2barrageseg(barrage_seg_dict):
         play_timestamp = float(barrage_seg_dict["play_timestamp"])
         row_id = barrage_seg_dict["row_id"]
         sender_id = barrage_seg_dict["sender_id"]
-        barrage_seg = BarrageSeg(play_timestamp, row_id, sender_id)
+        index = barrage_seg_dict["index"]
+        barrage_seg = BarrageSeg(play_timestamp, row_id, sender_id, index)
         sentence_seg_list = barrage_seg_dict["sentence_seg_list"]
         for word_seg_dict in sentence_seg_list:
             word_seg = WordSeg.dict2wordseg(word_seg_dict)
