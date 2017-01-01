@@ -159,7 +159,7 @@ def cluster_barrage_vector(barrage_vector, cluster_num=10):
     :return:
     """
     center_points, cluster = Kmeans(clusters_num=cluster_num, x_features=barrage_vector).cluster()
-    # cluster, noises = Dbscan(x_features=barrage_vector).fit()
+    # cluster, noises = Dbscan(x_features=barrage_vector, eps=4, min_pts=4).fit()
     return cluster
 
 

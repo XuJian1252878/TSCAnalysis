@@ -22,16 +22,20 @@ NOISE = -1
 
 class Dbscan(object):
 
-    def __init__(self, x_features, eps=4, min_pts=4):
+    def __init__(self, x_features, eps=None, min_pts=None):
         self.x_features_train = x_features  # 训练数据属性
         self.train_clusters = {}  # 训练集簇
-
-        self.eps = eps  # Eps的邻域
         self.k_th = 4
-        self.min_pts = min_pts  # 以点P为中心、半径为Eps的邻域内的点的个数不少于MinPts，那么p为核心点信息
 
-        self.estimate_eps()  # 估计Eps的取值
-        self.estimate_min_pts()  # 估计min_pts的取值
+        if (eps is None) and (min_pts is None):
+            self.estimate_eps()  # 估计Eps的取值
+            self.estimate_min_pts()  # 估计min_pts的取值
+        elif (eps is not None) and (min_pts is not None):
+            self.eps = eps  # Eps的邻域
+            self.min_pts = min_pts  # 以点P为中心、半径为Eps的邻域内的点的个数不少于MinPts，那么p为核心点信息
+        else:
+            self.eps = 4
+            self.min_pts = 4
 
         self.classifications = []  # 存储聚类的结果
         self.visit = []  # 记录点有没有被遍历
