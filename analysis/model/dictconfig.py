@@ -17,6 +17,9 @@ from util.fileutil import FileUtil
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
+# lda方法主题的数量
+LDA_TOPIC_COUNT = 8
+
 
 class DictConfig(object):
     __HAS_LOAD_USER_DICT = False  # 检测是否加载了用户自定义的词典
@@ -231,7 +234,7 @@ class DictConfig(object):
 
     # 根据语料库信息生成lda模型
     @classmethod
-    def gen_lda_model(cls, corpus, cid, num_topics=20):
+    def gen_lda_model(cls, corpus, cid, num_topics=LDA_TOPIC_COUNT):
         logging.debug(u"生成 lda 模型！！！")
         lda = models.LdaModel(corpus, num_topics=num_topics)
         lda.save(os.path.join(FileUtil.get_train_model_dir(), str(cid) + "-barrage-lda.model"))

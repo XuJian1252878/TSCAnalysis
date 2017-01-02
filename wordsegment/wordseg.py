@@ -12,6 +12,7 @@ from analysis.model.dictconfig import DictConfig
 from util.fileutil import FileUtil
 from util.loggerutil import Logger
 from util.loader.dataloader import get_barrage_from_txt_file
+from analysis.model.dictconfig import LDA_TOPIC_COUNT
 
 logger = Logger(console_only=True).get_logger()
 
@@ -105,7 +106,7 @@ def segment_barrages(barrages, cid=None, is_corpus=False):
     return barrage_seg_list
 
 
-def gen_lda_model(barrages, cid=None, num_topics=20):
+def gen_lda_model(barrages, cid=None, num_topics=LDA_TOPIC_COUNT):
     """
     重新生成弹幕的lda模型
     :param barrages:
@@ -238,4 +239,4 @@ if __name__ == "__main__":
     cid = FileUtil.get_cid_from_barrage_file_path(barrage_file_path)
     # barrage_seg_list = segment_barrages(barrages, cid)
     # __save_segment_word_list_to_file(barrage_seg_list, cid)
-    gen_lda_model(barrages, cid, 20)
+    gen_lda_model(barrages, cid, LDA_TOPIC_COUNT)

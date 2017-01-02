@@ -17,14 +17,12 @@ from analysis.model.timewindow import TimeWindow
 from analysis.model.kmeans import Kmeans
 from analysis.model.dbscan import Dbscan
 from gensim import corpora, models
+from analysis.model.dictconfig import LDA_TOPIC_COUNT
 
 # 这里使用三种方法生成f向量
 METHOD_F = 'f'
 METHOD_WORD_BASE = 'wordbase'
 METHOD_LDA = 'lda'
-
-# lda方法主题的数量
-LDA_TOPIC_COUNT = 20
 
 
 def load_doc2vec_model(model_name):
