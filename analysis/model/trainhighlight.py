@@ -147,7 +147,9 @@ def merge_highlight_by_same_label(highlight_window_list, cid, method):
 
     highlight_length = len(highlight_window_list)
 
-    for index in range(highlight_length):
+    # for index in range(highlight_length):  # 在for循环里面改动 index无效。。查一下是为什么。。
+    index = 0
+    while index < highlight_length:
         time_window = highlight_window_list[index]
 
         start_flag = time_window.start_timestamp
@@ -177,6 +179,7 @@ def merge_highlight_by_same_label(highlight_window_list, cid, method):
         result_highlight.append((start_flag, end_flag, cur_label))
         # 调整一下当前的下标
         index = forward_index - 1
+        index += 1
 
     # 存储当前的highlight列表信息
     __save_train_or_test_data(os.path.join(FileUtil.get_test_data_dir(), cid + '_' + method + '_predict_result.txt'),
@@ -311,7 +314,7 @@ def main(barrage_file, method=METHOD_F):
     f_cluster = None
     if method == METHOD_F:
         barrage_vector = train_barrage(barrage_seg_list)
-        f_cluster = cluster_barrage_vector(barrage_vector)
+        f_cluster = cluster_barrage_vector(barrage_vector, cluster_num=20)
 
     # 匹配训练数据以及其对应的时间窗口信息
     time_window_list = match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method, f_cluster)
@@ -321,7 +324,8 @@ def main(barrage_file, method=METHOD_F):
     print 'svm 训练完成'
 
     # 获取相应的time_window信息，读取全部的弹幕数据
-    highlight_window_list = get_highlight(barrage_seg_list, cid, method, f_cluster=f_cluster)
+    highlight_window_list = get_highlight(barrage_seg_list, cid, method, f_cluster=f_cluster, left_threshold=0.7,
+                                          right_threshold=0.3)
     print '获取 highlight列表'
 
     # 获取标记标签后的highlight信息
@@ -403,12 +407,12 @@ def find_optimal_param(barrage_file, method=METHOD_F):
     opt_param_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_opt_param.txt')
     with codecs.open(opt_param_file, 'wb', 'utf-8') as output_file:
         for item in opt_param_result:
-            info = [str[elem] for elem in item]
+            info = [str(elem) for elem in item]
             output_file.write('\t'.join(info) + '\n')
 
 if __name__ == '__main__':
     barrage_file_path = '../../data/local/2065063.txt'
     save_corpus_path = '../../data/local/corpus-words.txt'
 
-    find_optimal_param(barrage_file_path)
+    main(barrage_file_path, METHOD_LDA)
 

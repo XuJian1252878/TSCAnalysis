@@ -105,6 +105,20 @@ def segment_barrages(barrages, cid=None, is_corpus=False):
     return barrage_seg_list
 
 
+def gen_lda_model(barrages, cid=None, num_topics=20):
+    """
+    重新生成弹幕的lda模型
+    :param barrages:
+    :param cid:
+    :return:
+    """
+    barrage_seg_list = segment_barrages(barrages, cid)
+    # 将视频v全体的弹幕数据作为语料库，便于生成tf-idf，lda模型
+    corpus = DictConfig.gen_corpus_info(barrage_seg_list, cid)
+    # 以分好词的弹幕作为训练集，训练lda模型
+    DictConfig.gen_lda_model(corpus, cid, num_topics)
+
+
 # 对一个句子进行分词。
 # 参数：sentence 需要进行分词的句子。
 # 返回：包含该句子分词结果的列表，列表中的对象为WordSeg对象。
@@ -218,9 +232,10 @@ if __name__ == "__main__":
     #         print word_seg.word, u"\t", word_seg.flag, u"\t", word_seg.start_position, u"\t", word_seg.end_position
 
     cid = '935527'
-    barrage_file_path = '../data/local/2835798.txt'
+    barrage_file_path = '../data/local/2065063.txt'
     # barrage_seg_list = load_segment_barrages(cid)
     barrages = get_barrage_from_txt_file(barrage_file_path)
     cid = FileUtil.get_cid_from_barrage_file_path(barrage_file_path)
-    barrage_seg_list = segment_barrages(barrages, cid)
-    __save_segment_word_list_to_file(barrage_seg_list, cid)
+    # barrage_seg_list = segment_barrages(barrages, cid)
+    # __save_segment_word_list_to_file(barrage_seg_list, cid)
+    gen_lda_model(barrages, cid, 20)

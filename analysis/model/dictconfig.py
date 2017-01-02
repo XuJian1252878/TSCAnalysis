@@ -231,9 +231,9 @@ class DictConfig(object):
 
     # 根据语料库信息生成lda模型
     @classmethod
-    def gen_lda_model(cls, corpus, cid):
+    def gen_lda_model(cls, corpus, cid, num_topics=20):
         logging.debug(u"生成 lda 模型！！！")
-        lda = models.LdaModel(corpus, num_topics=10)
+        lda = models.LdaModel(corpus, num_topics=num_topics)
         lda.save(os.path.join(FileUtil.get_train_model_dir(), str(cid) + "-barrage-lda.model"))
 
     # 初始化所有的字典信息。

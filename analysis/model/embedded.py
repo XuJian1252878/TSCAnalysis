@@ -24,7 +24,7 @@ METHOD_WORD_BASE = 'wordbase'
 METHOD_LDA = 'lda'
 
 # lda方法主题的数量
-LDA_TOPIC_COUNT = 10
+LDA_TOPIC_COUNT = 20
 
 
 def load_doc2vec_model(model_name):
