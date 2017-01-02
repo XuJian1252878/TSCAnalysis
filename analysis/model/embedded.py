@@ -163,7 +163,8 @@ def cluster_barrage_vector(barrage_vector, cluster_num=10):
     return cluster
 
 
-def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_sample=None, f_cluster=None):
+def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_sample=None, f_cluster=None,
+                  left_threshold=0.3, right_threshold=0.7):
     """
     根据每一条弹幕的分词列表以及聚类信息，获取电影中主题较为集中的片段
     :param barrage_seg_list:
@@ -172,6 +173,8 @@ def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_
     :param is_train 训练 和 测试 情况下load的time_window不一样
     :param train_sample 人工标注的数据
     :param f_cluster 聚好类的弹幕数据
+    :param left_threshold
+    :param right_threshold
     :return:
     """
     # 以十秒为时间窗口来划分弹幕文件
@@ -202,11 +205,11 @@ def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_
     if not is_train:
         # 因为有人在开始和结束的时候刷屏，所以把开始和结束的一分钟之内的弹幕去掉
         if len(time_window_list) > 180:  # 如果视频片段大于30分钟
-            time_window_list = time_window_list[6: -6]
+            time_window_list = time_window_list[3: -3]
         # 计算每个时间窗口的rating值
         max_rating, min_rating = rating_f(time_window_list)
         # 去除主题不集中的时间窗口
-        time_window_list = filter_time_window(time_window_list, max_rating, min_rating)
+        time_window_list = filter_time_window(time_window_list, max_rating, min_rating, left_threshold, right_threshold)
     return time_window_list
 
 
@@ -239,15 +242,17 @@ def rating_f(time_window_list):
     return max(ratings), min(ratings)
 
 
-def filter_time_window(time_window_list, max_rating, min_rating):
+def filter_time_window(time_window_list, max_rating, min_rating, left_threshold=0.3, right_threshold=0.7):
     """
     返回rating值大于阈值的时间窗口
     :param time_window_list:
     :param max_rating:
     :param min_rating:
+    :param left_threshold
+    :param right_threshold
     :return:
     """
-    threshold = 0.7 * min_rating + 0.3 * max_rating
+    threshold = left_threshold * min_rating + right_threshold * max_rating
     time_window_result = []
     for time_window in time_window_list:
         if time_window.rating > threshold:

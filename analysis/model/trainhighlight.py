@@ -8,6 +8,7 @@ import os
 from util.loader.dataloader import get_barrage_from_txt_file
 from wordsegment.wordseg import segment_barrages
 from analysis.model.timewindow import TimeWindow
+import numpy as np
 from analysis.model.embedded import cluster_barrage_vector, gen_f_vector_time_window, train_barrage
 from analysis.model.embedded import METHOD_LDA, METHOD_WORD_BASE, METHOD_F, get_highlight
 from analysis.model.svm import multi_classi
@@ -75,7 +76,7 @@ def match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, metho
     :param f_cluster:
     :return:
     """
-    time_window_list = get_highlight(barrage_seg_list, cid, method, True, train_sample, f_cluster)
+    time_window_list = get_highlight(barrage_seg_list, cid, method, True, train_sample, f_cluster=f_cluster)
     return time_window_list
 
 
@@ -119,6 +120,8 @@ def svm_predict(svm_model, highlight_window_list, method=METHOD_F):
     :param method:
     :return:
     """
+    if len(highlight_window_list) <= 0:
+        return []
     # 获取time_window 向量属性的列表
     x_features, y_labels = __gen_features_and_labels(highlight_window_list)
     predict_labels = svm_model.predict(x_features)
@@ -254,14 +257,15 @@ def evaluate_effect(cid, method, baseline_file, predict_file):
     save_overlape_info(cid, method, overlape_info)
 
     # 计算重叠时间的指标信息
-    precision = overlape_seconds * 1.0 / seconds_predict
-    recall = overlape_seconds * 1.0 / seconds_baseline
-    F1 = (2.0 * precision * recall) / (precision + recall)
+    precision = (overlape_seconds * 1.0 / seconds_predict) if seconds_predict > 0 else 0
+    recall = (overlape_seconds * 1.0 / seconds_baseline) if seconds_baseline > 0 else 0
+    F1 = ((2.0 * precision * recall) / (precision + recall)) if (precision + recall) > 0 else 0
 
     # 计算重叠标签的指标信息
-    precision_label = overlape_labels * 1.0 / labels_predict
-    recall_label = overlape_labels * 1.0 / labels_baseline
-    F1_label = (2.0 * precision_label * recall_label) / (precision_label + recall_label)
+    precision_label = (overlape_labels * 1.0 / labels_predict) if labels_predict > 0 else 0
+    recall_label = (overlape_labels * 1.0 / labels_baseline) if labels_baseline > 0 else 0
+    F1_label = ((2.0 * precision_label * recall_label) / (precision_label + recall_label))\
+        if (precision_label + recall_label) > 0 else 0
 
     return precision, recall, F1, precision_label, recall_label, F1_label
 
@@ -300,14 +304,14 @@ def main(barrage_file, method=METHOD_F):
     cid = FileUtil.get_cid_from_barrage_file_path(barrage_file)
     barrage_seg_list = segment_barrages(barrages, cid)
 
+    # 然后读取人工标注的 barrage file的电影片段label信息
+    train_sample = __load_train_or_data(os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt'))
+
     # 如果是使用f向量，那么现将弹幕聚好类
     f_cluster = None
     if method == METHOD_F:
         barrage_vector = train_barrage(barrage_seg_list)
         f_cluster = cluster_barrage_vector(barrage_vector)
-
-    # 然后读取人工标注的 barrage file的电影片段label信息
-    train_sample = __load_train_or_data(os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt'))
 
     # 匹配训练数据以及其对应的时间窗口信息
     time_window_list = match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method, f_cluster)
@@ -335,9 +339,76 @@ def main(barrage_file, method=METHOD_F):
     return precision, recall, F1, precision_label, recall_label, F1_label
 
 
+def find_optimal_param(barrage_file, method=METHOD_F):
+    """
+    svm聚类的主流程函数
+    :param barrage_file:
+    :param method:
+    :return:
+    """
+    # 首先读取train数据对应的弹幕文件信息
+    barrages = get_barrage_from_txt_file(barrage_file)
+    cid = FileUtil.get_cid_from_barrage_file_path(barrage_file)
+    barrage_seg_list = segment_barrages(barrages, cid)
+
+    # 然后读取人工标注的 barrage file的电影片段label信息
+    train_sample = __load_train_or_data(os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt'))
+
+    opt_param_result = []
+
+    for left_threshold in np.linspace(0.1, 0.9, 9):
+        for right_threshold in np.linspace(0.9, 0.1, 9):
+            for cluster_num in xrange(10, 101):
+
+                print '--------------------------------------------------------------------------------------'
+                print 'left_threshold: ', str(left_threshold), '. right_threshold: ', str(right_threshold), \
+                    '. cluster_num: ', str(cluster_num)
+                print '--------------------------------------------------------------------------------------'
+
+                # 如果是使用f向量，那么现将弹幕聚好类
+                f_cluster = None
+                if method == METHOD_F:
+                    barrage_vector = train_barrage(barrage_seg_list)
+                    f_cluster = cluster_barrage_vector(barrage_vector, cluster_num=cluster_num)
+
+                # 匹配训练数据以及其对应的时间窗口信息
+                time_window_list = match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method,
+                                                                     f_cluster)
+
+                # 训练svm模型
+                svm_model = train_svm(time_window_list)
+                print 'svm 训练完成'
+
+                # 获取相应的time_window信息，读取全部的弹幕数据
+                highlight_window_list = get_highlight(barrage_seg_list, cid, method, f_cluster=f_cluster,
+                                                      left_threshold=left_threshold, right_threshold=right_threshold)
+                print '获取 highlight列表'
+
+                # 获取标记标签后的highlight信息
+                highlight_window_list = svm_predict(svm_model, highlight_window_list, method)
+
+                # 合并时间相连的并且标签相同的 high_light
+                result_highlight = merge_highlight_by_same_label(highlight_window_list, cid, method)
+
+                # 计算结果预测的指标信息
+                baseline_file = os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt')
+                predict_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_' + method + '_predict_result.txt')
+                precision, recall, F1, precision_label, recall_label, F1_label = \
+                    evaluate_effect(cid, method, baseline_file, predict_file)
+
+                opt_param_result.append([cluster_num, left_threshold, right_threshold,
+                                         precision, recall, F1, precision_label, recall_label, F1_label])
+
+    opt_param_result = sorted(opt_param_result, key=lambda item: item[5], reverse=True)
+    opt_param_file = os.path.join(FileUtil.get_test_data_dir(), cid + '_opt_param.txt')
+    with codecs.open(opt_param_file, 'wb', 'utf-8') as output_file:
+        for item in opt_param_result:
+            info = [str[elem] for elem in item]
+            output_file.write('\t'.join(info) + '\n')
+
 if __name__ == '__main__':
     barrage_file_path = '../../data/local/2065063.txt'
     save_corpus_path = '../../data/local/corpus-words.txt'
 
-    main(barrage_file_path)
+    find_optimal_param(barrage_file_path)
 
