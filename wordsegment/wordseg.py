@@ -233,7 +233,7 @@ if __name__ == "__main__":
     #         print word_seg.word, u"\t", word_seg.flag, u"\t", word_seg.start_position, u"\t", word_seg.end_position
 
     cid = '935527'
-    barrage_file_path = '../data/local/2065063.txt'
+    barrage_file_path = '../data/local/935527.txt'
     # barrage_seg_list = load_segment_barrages(cid)
     barrages = get_barrage_from_txt_file(barrage_file_path)
     cid = FileUtil.get_cid_from_barrage_file_path(barrage_file_path)

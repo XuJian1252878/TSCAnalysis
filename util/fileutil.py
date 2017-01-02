@@ -201,6 +201,17 @@ class FileUtil(object):
         FileUtil.create_dir_if_not_exist(test_data_dir)
         return test_data_dir
 
+    @staticmethod
+    def get_dir_files(dir_name):
+        file_dir_list = os.listdir(dir_name)
+        files = []
+        for file_or_dir in file_dir_list:
+            file_or_dir_path = os.path.join(dir_name, file_or_dir)
+            if os.path.isfile(file_or_dir_path):  # 如果是文件
+                files.append(file_or_dir)
+        return files
+
 
 if __name__ == "__main__":
-    print FileUtil.get_local_data_dir()
+    print FileUtil.get_dir_files(FileUtil.get_train_data_dir())
+    # print FileUtil.get_local_data_dir()

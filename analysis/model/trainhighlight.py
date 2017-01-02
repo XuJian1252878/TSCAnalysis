@@ -194,11 +194,15 @@ def __calc_seconds_and_labels(highlight_slice):
     :return:
     """
     seconds = 0
-    labels = set([])
+    # labels = set([])
+    label_count = 0
     for start, end, label in highlight_slice:
         seconds += (end - start)
-        labels.add(label)
-    label_count = len(labels)
+
+        tmp_label_num = (end - start) / TimeWindow.get_time_window_size()
+        label_count += tmp_label_num
+        # labels.add(label)
+    # label_count = len(labels)
     return seconds, label_count
 
 
@@ -293,6 +297,37 @@ def __save_index(cid, method, precision, recall, F1, precision_label, recall_lab
         output_file.write('precision_label: ' + str(precision_label) + '\n')
         output_file.write('recall_label: ' + str(recall_label) + '\n')
         output_file.write('F1_label: ' + str(F1_label) + '\n')
+
+
+def get_train_sample_windows(method):
+    """
+    所用所有训练数据训练svm模型
+    :param method:
+    :return:
+    """
+    time_window_list = []
+
+    train_files = FileUtil.get_dir_files(FileUtil.get_train_data_dir())
+    for train_file in train_files:
+        cid = train_file.split('_')[0]
+
+        barrage_file = os.path.join(FileUtil.get_local_data_dir(), cid + '.txt')
+        # 首先读取train数据对应的弹幕文件信息
+        barrages = get_barrage_from_txt_file(barrage_file)
+        barrage_seg_list = segment_barrages(barrages, cid)
+
+        # 然后读取人工标注的 barrage file的电影片段label信息
+        train_sample = __load_train_or_data(os.path.join(FileUtil.get_train_data_dir(), cid + '_train_data.txt'))
+
+        # 如果是使用f向量，那么现将弹幕聚好类
+        f_cluster = None
+        if method == METHOD_F:
+            barrage_vector = train_barrage(barrage_seg_list)
+            f_cluster = cluster_barrage_vector(barrage_vector, cluster_num=20)
+
+        # 匹配训练数据以及其对应的时间窗口信息
+        time_window_list += match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method, f_cluster)
+    return time_window_list
 
 
 def main(barrage_file, method=METHOD_F):
@@ -414,5 +449,5 @@ if __name__ == '__main__':
     barrage_file_path = '../../data/local/2065063.txt'
     save_corpus_path = '../../data/local/corpus-words.txt'
 
-    main(barrage_file_path, METHOD_LDA)
+    main(barrage_file_path, METHOD_F)
 
