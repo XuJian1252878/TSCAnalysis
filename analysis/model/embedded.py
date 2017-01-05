@@ -80,6 +80,7 @@ def gen_f_vector_time_window(time_window_list, cluster):
                 if index in barrage_index_list:
                     f[topic_no] += 1  # 记录这个时间窗口的弹幕在各个主题下的数量
                     break
+        # f = (f - f.mean()) / f.std()
         time_window.f = f
 
 
@@ -104,6 +105,9 @@ def gen_lda_vector_time_window(time_window_list, dictionary, lda_model):
         barrage_lda_vector = np.zeros(LDA_TOPIC_COUNT)
         for topic_no, percent in barrage_lda:
             barrage_lda_vector[topic_no] = percent
+
+        # 标准化数据，优化实验结果
+        # barrage_lda_vector = (barrage_lda_vector - barrage_lda_vector.mean()) / barrage_lda_vector.std()
         time_window.f = barrage_lda_vector
 
 
@@ -126,6 +130,8 @@ def gen_wordbase_vector_time_window(time_window_list, dictionary):
         wordbase_vector = np.zeros(corpus_words_count)
         for token_id, word_fre in barrage_bow:
             wordbase_vector[token_id] = word_fre  # 记录词频向量信息
+
+        # wordbase_vector = (wordbase_vector - wordbase_vector.mean()) / wordbase_vector.std()
         time_window.f = wordbase_vector
 
 
@@ -203,12 +209,25 @@ def get_highlight(barrage_seg_list, cid, method=METHOD_F, is_train=False, train_
     if not is_train:
         # 因为有人在开始和结束的时候刷屏，所以把开始和结束的一分钟之内的弹幕去掉
         if len(time_window_list) > 180:  # 如果视频片段大于30分钟
-            time_window_list = time_window_list[3: -3]
+            time_window_list = time_window_list[6: -6]
         # 计算每个时间窗口的rating值
         max_rating, min_rating = rating_f(time_window_list)
         # 去除主题不集中的时间窗口
         time_window_list = filter_time_window(time_window_list, max_rating, min_rating, left_threshold, right_threshold)
+
     return time_window_list
+
+
+def normalize_f(time_window_list):
+    """
+    将time_window中的f向量标准化
+    :param time_window_list:
+    :return:
+    """
+    for time_window in time_window_list:
+        vector = time_window.f
+        vector = (vector - vector.mean()) / vector.std()
+        time_window.f = vector
 
 
 def rating_f(time_window_list):
@@ -229,6 +248,7 @@ def rating_f(time_window_list):
 
         rating_up /= (k * 1.0)
         print time_window.f
+        # p = (time_window.f - time_window.f.mean()) / time_window.f.std()
         p = time_window.f * 1.0 / time_window.f.sum(axis=0)
         entropy = 1  # 避免只有一个主题有弹幕，然后entropy被算为0
         for item in p:

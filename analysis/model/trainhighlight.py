@@ -199,8 +199,7 @@ def __calc_seconds_and_labels(highlight_slice):
     for start, end, label in highlight_slice:
         seconds += (end - start)
 
-        tmp_label_num = (end - start) / TimeWindow.get_time_window_size()
-        label_count += tmp_label_num
+        label_count += 1
         # labels.add(label)
     # label_count = len(labels)
     return seconds, label_count
@@ -257,7 +256,7 @@ def evaluate_effect(cid, method, baseline_file, predict_file):
                 overlape_info.append([start, end, label_p, label_b])  # 存储预测以及baseline的吻合度信息
                 if label_p == label_b:
                     overlape_seconds += end - start  # 只有标签相等的时候，重合时间才算正确
-                    overlape_labels_set.add(label_b)
+                    overlape_labels_set.add((start, end, label_b))
     overlape_labels = len(overlape_labels_set)
 
     # 存储具体的预测准确率信息
@@ -354,13 +353,14 @@ def main(barrage_file, method=METHOD_F):
     # 匹配训练数据以及其对应的时间窗口信息
     time_window_list = match_train_sample_to_time_window(barrage_seg_list, train_sample, cid, method, f_cluster)
 
+    # time_window_list = get_train_sample_windows(method)
     # 训练svm模型
     svm_model = train_svm(time_window_list)
     print 'svm 训练完成'
 
     # 获取相应的time_window信息，读取全部的弹幕数据
-    highlight_window_list = get_highlight(barrage_seg_list, cid, method, f_cluster=f_cluster, left_threshold=0.7,
-                                          right_threshold=0.3)
+    highlight_window_list = get_highlight(barrage_seg_list, cid, method, f_cluster=f_cluster, left_threshold=0.4,
+                                          right_threshold=0.6)
     print '获取 highlight列表'
 
     # 获取标记标签后的highlight信息
@@ -446,8 +446,8 @@ def find_optimal_param(barrage_file, method=METHOD_F):
             output_file.write('\t'.join(info) + '\n')
 
 if __name__ == '__main__':
-    barrage_file_path = '../../data/local/2065063.txt'
+    barrage_file_path = '../../data/local/2171229.txt'
     save_corpus_path = '../../data/local/corpus-words.txt'
 
-    main(barrage_file_path, METHOD_F)
+    main(barrage_file_path, METHOD_LDA)
 

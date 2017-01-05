@@ -9,6 +9,8 @@ import numpy as np
 
 import util.loader.dataloader as dataloader
 import wordsegment.wordseg as wordseg
+from util.loader.dataloader import get_barrage_from_txt_file
+from wordsegment.wordseg import segment_barrages
 from util.datetimeutil import DateTimeUtil
 from util.fileutil import FileUtil
 
@@ -116,6 +118,7 @@ class TimeWindow(object):
                 start = end
                 end = start + TimeWindow.__TIME_WINDOW_SIZE
         return time_window_list
+
 
 # if __name__ == "__main__":
 #     barrage_file_path = "../../data/local/4547002.txt"

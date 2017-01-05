@@ -198,6 +198,7 @@ def __save_segment_word_list_to_file(barrage_seg_list, cid):
                 words.append(word_seg.word)
             output_file.write('\t'.join(words) + '\n')
 
+
 # 将切词的结果写入文件中，json的形式。
 # 参数：cid  弹幕来源的cid名称，用来构建弹幕切词结果的存储路径，格式如：cid-seg-result.json
 #      barrage_seg_list 切词结果list
@@ -233,7 +234,7 @@ if __name__ == "__main__":
     #         print word_seg.word, u"\t", word_seg.flag, u"\t", word_seg.start_position, u"\t", word_seg.end_position
 
     cid = '935527'
-    barrage_file_path = '../data/local/935527.txt'
+    barrage_file_path = '../data/local/2171229.txt'
     # barrage_seg_list = load_segment_barrages(cid)
     barrages = get_barrage_from_txt_file(barrage_file_path)
     cid = FileUtil.get_cid_from_barrage_file_path(barrage_file_path)
